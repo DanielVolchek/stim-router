@@ -5,24 +5,24 @@ import "net/http"
 type Middleware func(http.Handler) http.Handler
 
 type Route struct {
-	route        string
-	finalHandler http.Handler
+	Route        string
+	FinalHandler http.Handler
 	// Middlewares are called in reverse order
 	// (index[0](index[1](finalHandler)))
-	middleware []Middleware
+	Middleware []Middleware
 }
 
 func (route *Route) ConstructRouteHandler(handler *http.ServeMux) {
-	if len(route.middleware) > 0 {
-		var handleFunc http.Handler = route.finalHandler
+	if len(route.Middleware) > 0 {
+		var handleFunc http.Handler = route.FinalHandler
 
 		// Apply middlewares in reverse order
-		for i := 0; i < len(route.middleware); i++ {
-			handleFunc = route.middleware[i](handleFunc)
+		for i := 0; i < len(route.Middleware); i++ {
+			handleFunc = route.Middleware[i](handleFunc)
 		}
 
-		handler.Handle(route.route, handleFunc)
+		handler.Handle(route.Route, handleFunc)
 	} else {
-		handler.Handle(route.route, route.finalHandler)
+		handler.Handle(route.Route, route.FinalHandler)
 	}
 }
