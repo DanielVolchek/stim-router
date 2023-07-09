@@ -1,6 +1,9 @@
 package router
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+)
 
 type Middleware func(http.Handler) http.Handler
 
@@ -12,7 +15,9 @@ type Route struct {
 	Middleware []Middleware
 }
 
-func (route *Route) ConstructRouteHandler(handler *http.ServeMux) {
+func (route *Route) ConstructRouteHandler(handler *http.ServeMux, prefix string) {
+	routePath := fmt.Sprintf("%s/%s", prefix, route.Route)
+
 	if len(route.Middleware) > 0 {
 		var handleFunc http.Handler = route.FinalHandler
 
@@ -21,8 +26,8 @@ func (route *Route) ConstructRouteHandler(handler *http.ServeMux) {
 			handleFunc = route.Middleware[i](handleFunc)
 		}
 
-		handler.Handle(route.Route, handleFunc)
+		handler.Handle(routePath, handleFunc)
 	} else {
-		handler.Handle(route.Route, route.FinalHandler)
+		handler.Handle(routePath, route.FinalHandler)
 	}
 }

@@ -1,3 +1,3 @@
-module github.com/danielvolchek/stim-utils
+module github.com/danielvolchek/stim-router
 
 go 1.20
